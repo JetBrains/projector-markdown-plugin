@@ -1,0 +1,209 @@
+<!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2019-2020 JetBrains s.r.o.
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+<idea-plugin>
+  <id>org.jetbrains.projector-markdown-plugin</id>
+  <name>Projector Markdown</name>
+  <vendor>JetBrains</vendor>
+  <category>Languages</category>
+  <resource-bundle>messages.MarkdownBundle</resource-bundle>
+  <depends>com.intellij.modules.lang</depends>
+  <depends optional="true" config-file="plugin-intelliLang.xml">org.intellij.intelliLang</depends>
+
+  <description><![CDATA[
+<h1>projector-markdown-markdown</h1>
+<p>Provides the capability to edit Markdown files within the IDE and see the rendered HTML in a live preview.
+</br>
+</br>
+Includes the following features:</p>
+<ul>
+<li>Document structure view, headers folding, highlighting, TODOs.</li>
+<li>Code completion and navigation for links to project files.</li>
+<li>Embedding fenced code blocks for different languages.</li>
+<li>Visualizing diagrams for the DOT or PlantUML diagramming languages.</li>
+<li>Ability to use custom stylesheets for a live preview.</li>
+</ul>
+]]></description>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.projector.markdown.html.panel.provider"
+                    interface="org.jetbrains.projector.plugins.markdown.ui.preview.MarkdownHtmlPanelProvider"/>
+    <extensionPoint qualifiedName="org.jetbrains.projector.markdown.fenceLanguageProvider"
+                    interface="org.jetbrains.projector.plugins.markdown.injection.CodeFenceLanguageProvider"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.projector.markdown.codeFencePluginGeneratingProvider"
+                    interface="org.jetbrains.projector.plugins.markdown.extensions.MarkdownCodeFencePluginGeneratingProvider"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType name="Markdown" extensions="md;markdown" language="Markdown"
+              implementationClass="org.jetbrains.projector.plugins.markdown.lang.MarkdownFileType" fieldName="INSTANCE"/>
+    <lang.fileViewProviderFactory language="Markdown"
+                                  implementationClass="org.jetbrains.projector.plugins.markdown.lang.MarkdownFileViewProviderFactory"/>
+    <lang.parserDefinition language="Markdown"
+                           implementationClass="org.jetbrains.projector.plugins.markdown.lang.parser.MarkdownParserDefinition"/>
+    <lang.ast.factory language="Markdown" implementationClass="org.jetbrains.projector.plugins.markdown.lang.psi.MarkdownASTFactory"/>
+
+    <lang.elementManipulator forClass="org.jetbrains.projector.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl"
+                             implementationClass="org.jetbrains.projector.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl$Manipulator"/>
+    <lang.elementManipulator forClass="org.jetbrains.projector.plugins.markdown.lang.psi.impl.MarkdownLinkDestinationImpl"
+                             implementationClass="org.jetbrains.projector.plugins.markdown.lang.psi.impl.MarkdownLinkDestinationImpl$Manipulator"/>
+
+    <colorSettingsPage implementation="org.jetbrains.projector.plugins.markdown.highlighting.MarkdownColorSettingsPage"/>
+    <syntaxHighlighter key="Markdown"
+                       implementationClass="org.jetbrains.projector.plugins.markdown.highlighting.MarkdownSyntaxHighlighter"/>
+    <additionalTextAttributes scheme="Default" file="colorSchemes/MarkdownDefault.xml"/>
+    <additionalTextAttributes scheme="Darcula" file="colorSchemes/MarkdownDarcula.xml"/>
+
+    <braceMatcher filetype="Markdown" implementationClass="org.jetbrains.projector.plugins.markdown.braces.MarkdownBraceMatcher"/>
+    <quoteHandler fileType="Markdown" className="org.jetbrains.projector.plugins.markdown.braces.MarkdownQuoteHandler"/>
+    <typedHandler implementation="org.jetbrains.projector.plugins.markdown.editor.MarkdownTypedHandler"/>
+
+    <bidiRegionsSeparator language="Markdown"
+                          implementationClass="org.jetbrains.projector.plugins.markdown.editor.MarkdownBidiRegionsSeparator"/>
+
+    <annotator language="Markdown"
+               implementationClass="org.jetbrains.projector.plugins.markdown.highlighting.MarkdownHighlightingAnnotator"/>
+
+    <multiHostInjector implementation="org.jetbrains.projector.plugins.markdown.injection.CodeFenceInjector"/>
+
+    <completion.contributor language="Markdown"
+                            implementationClass="org.jetbrains.projector.plugins.markdown.injection.LanguageListCompletionContributor"/>
+
+    <fileEditorProvider implementation="org.jetbrains.projector.plugins.markdown.ui.preview.MarkdownSplitEditorProvider"/>
+
+    <spellchecker.support language="Markdown"
+                          implementationClass="org.jetbrains.projector.plugins.markdown.spellchecking.MarkdownSpellcheckingStrategy"/>
+
+    <applicationConfigurable id="Settings.Markdown"
+                             bundle="messages.MarkdownBundle"
+                             groupId="language"
+                             nonDefaultProject="true"
+                             key="markdown.settings.name"
+                             instance="org.jetbrains.projector.plugins.markdown.settings.MarkdownSettingsConfigurable">
+    </applicationConfigurable>
+    <applicationService serviceImplementation="org.jetbrains.projector.plugins.markdown.settings.MarkdownApplicationSettings"/>
+    <applicationService serviceImplementation="org.jetbrains.projector.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache"/>
+    <lang.psiStructureViewFactory language="Markdown"
+                                  implementationClass="org.jetbrains.projector.plugins.markdown.structureView.MarkdownStructureViewFactory"/>
+    <psi.referenceContributor implementation="org.jetbrains.projector.plugins.markdown.lang.references.MarkdownReferenceProvider"/>
+    <stripTrailingSpacesFilterFactory
+      implementation="org.jetbrains.projector.plugins.markdown.editor.MarkdownStripTrailingSpacesFilterFactory"/>
+    <httpRequestHandler implementation="org.jetbrains.projector.plugins.markdown.ui.preview.PreviewStaticServer"/>
+
+    <localInspection shortName="MarkdownUnresolvedFileReference" bundle="messages.MarkdownBundle"
+                     key="markdown.unresolved.file.inspection.name" groupKey="markdown.inspection.group.ruby.name"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="org.jetbrains.projector.plugins.markdown.lang.references.MarkdownUnresolvedFileReferenceInspection"/>
+
+    <lang.foldingBuilder language="Markdown" implementationClass="org.jetbrains.projector.plugins.markdown.folding.MarkdownFoldingBuilder"/>
+    <stubIndex implementation="org.jetbrains.projector.plugins.markdown.lang.index.MarkdownHeadersIndex"/>
+    <stubElementTypeHolder class="org.jetbrains.projector.plugins.markdown.lang.MarkdownElementTypes"/>
+    <anchorReferenceProvider implementation="org.jetbrains.projector.plugins.markdown.lang.references.MarkdownAnchorPathReferenceProvider"/>
+    <todoIndexer filetype="Markdown" implementationClass="org.jetbrains.projector.plugins.markdown.highlighting.MarkdownTodoIndexer"/>
+    <indexPatternBuilder implementation="org.jetbrains.projector.plugins.markdown.highlighting.MarkdownIndexPatternBuilder"/>
+    <langCodeStyleSettingsProvider
+      implementation="org.jetbrains.projector.plugins.markdown.lang.formatter.MarkdownLanguageCodeStyleSettingsProvider"/>
+    <enterHandlerDelegate implementation="org.jetbrains.projector.plugins.markdown.editor.MarkdownEnterHandler"/>
+    <lang.lineWrapStrategy language="Markdown"
+                           implementationClass="org.jetbrains.projector.plugins.markdown.editor.MarkdownLineWrapPositionStrategy"/>
+    <highlightErrorFilter
+      implementation="org.jetbrains.projector.plugins.markdown.injection.MarkdownCodeFenceErrorHighlightingIntention$CodeFenceHighlightErrorFilter"/>
+
+    <intentionAction>
+      <className>org.jetbrains.projector.plugins.markdown.injection.MarkdownCodeFenceErrorHighlightingIntention</className>
+      <category>Markdown</category>
+    </intentionAction>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.projector.markdown">
+    <html.panel.provider implementation="org.jetbrains.projector.plugins.markdown.ui.preview.projector.ProjectorMarkdownHtmlPanelProvider"/>
+    <fenceLanguageProvider implementation="org.jetbrains.projector.plugins.markdown.extensions.plantuml.PlantUMLCodeFenceLanguageProvider"/>
+    <codeFencePluginGeneratingProvider implementation="org.jetbrains.projector.plugins.markdown.extensions.plantuml.PlantUMLProvider"/>
+  </extensions>
+
+  <actions>
+    <group id="Markdown.Toolbar.Left" class="com.intellij.openapi.actionSystem.DefaultActionGroup">
+      <action class="org.jetbrains.projector.plugins.markdown.ui.actions.styling.ToggleBoldAction"
+              id="org.jetbrains.projector.plugins.markdown.ui.actions.styling.ToggleBoldAction"
+              icon="MarkdownIcons.EditorActions.Bold">
+      </action>
+
+      <action class="org.jetbrains.projector.plugins.markdown.ui.actions.styling.ToggleStrikethroughAction"
+              id="org.jetbrains.projector.plugins.markdown.ui.actions.styling.ToggleStrikethroughAction"
+              icon="MarkdownIcons.EditorActions.Strike_through">
+      </action>
+
+      <action class="org.jetbrains.projector.plugins.markdown.ui.actions.styling.ToggleItalicAction"
+              id="org.jetbrains.projector.plugins.markdown.ui.actions.styling.ToggleItalicAction"
+              icon="MarkdownIcons.EditorActions.Italic">
+      </action>
+
+      <action class="org.jetbrains.projector.plugins.markdown.ui.actions.styling.ToggleCodeSpanAction"
+              id="org.jetbrains.projector.plugins.markdown.ui.actions.styling.ToggleCodeSpanAction"
+              icon="MarkdownIcons.EditorActions.Code_span">
+      </action>
+
+      <action class="org.jetbrains.projector.plugins.markdown.ui.actions.styling.HeaderDownAction"
+              id="org.jetbrains.projector.plugins.markdown.ui.actions.styling.HeaderDownAction"
+              icon="MarkdownIcons.EditorActions.Header_level_down">
+      </action>
+
+      <action class="org.jetbrains.projector.plugins.markdown.ui.actions.styling.HeaderUpAction"
+              id="org.jetbrains.projector.plugins.markdown.ui.actions.styling.HeaderUpAction"
+              icon="MarkdownIcons.EditorActions.Header_level_up">
+      </action>
+
+      <action class="org.jetbrains.projector.plugins.markdown.ui.actions.styling.MarkdownIntroduceLinkReferenceAction"
+              id="org.jetbrains.projector.plugins.markdown.ui.actions.styling.MarkdownIntroduceLinkReferenceAction"
+              icon="MarkdownIcons.EditorActions.Link">
+      </action>
+    </group>
+
+    <action class="org.jetbrains.projector.plugins.markdown.ui.actions.editorLayout.CyclicSplitLayoutChangeAction"
+            id="org.jetbrains.projector.plugins.markdown.ui.actions.editorLayout.CyclicSplitLayoutChangeAction"
+            icon="AllIcons.Actions.PreviewDetails"
+            use-shortcut-of="ParameterInfo">
+    </action>
+
+    <group id="Markdown.Toolbar.Right" class="com.intellij.openapi.actionSystem.DefaultActionGroup">
+      <action class="org.jetbrains.projector.plugins.markdown.ui.actions.editorLayout.EditorOnlyLayoutChangeAction"
+              id="org.jetbrains.projector.plugins.markdown.ui.actions.editorLayout.EditorOnlyLayoutChangeAction"
+              icon="AllIcons.General.LayoutEditorOnly">
+      </action>
+      <action class="org.jetbrains.projector.plugins.markdown.ui.actions.editorLayout.EditorAndPreviewLayoutChangeAction"
+              id="org.jetbrains.projector.plugins.markdown.ui.actions.editorLayout.EditorAndPreviewLayoutChangeAction"
+              icon="AllIcons.General.LayoutEditorPreview">
+      </action>
+      <action class="org.jetbrains.projector.plugins.markdown.ui.actions.editorLayout.PreviewOnlyLayoutChangeAction"
+              id="org.jetbrains.projector.plugins.markdown.ui.actions.editorLayout.PreviewOnlyLayoutChangeAction"
+              icon="AllIcons.General.LayoutPreviewOnly">
+      </action>
+      <separator/>
+      <action class="org.jetbrains.projector.plugins.markdown.ui.actions.scrolling.AutoScrollAction"
+              id="org.jetbrains.projector.plugins.markdown.ui.actions.scrolling.AutoScrollAction"
+              icon="AllIcons.Actions.SynchronizeScrolling">
+      </action>
+    </group>
+  </actions>
+</idea-plugin>
