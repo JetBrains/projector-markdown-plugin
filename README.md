@@ -1,5 +1,6 @@
 # projector-markdown-plugin
 [![JetBrains incubator project](https://jb.gg/badges/incubator.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+[![Tests status badge](https://github.com/JetBrains/projector-markdown-plugin/workflows/Tests/badge.svg)](https://github.com/JetBrains/projector-markdown-plugin/actions)
 
 An IntelliJ plugin which provides a delegating Markdown preview.
 
