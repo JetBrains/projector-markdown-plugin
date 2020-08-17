@@ -56,6 +56,7 @@ public class MarkdownCodeFencePluginCache implements Disposable {
   @NotNull private final Alarm myAlarm = new Alarm(this);
   @NotNull private final Collection<MarkdownCodeFencePluginCacheCollector> myCodeFencePluginCaches = ContainerUtil.newConcurrentSet();
   @NotNull private final Collection<File> myAdditionalCacheToDelete = ContainerUtil.newConcurrentSet();
+  private final int MARKDOWN_CLEAR_CACHE_INTERVAL = 600000;
 
   public MarkdownCodeFencePluginCache() {
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
@@ -90,7 +91,7 @@ public class MarkdownCodeFencePluginCache implements Disposable {
       clear();
 
       scheduleClearCache();
-    }, Registry.intValue("markdown.clear.cache.interval"));
+    }, MARKDOWN_CLEAR_CACHE_INTERVAL);
   }
 
   private void clear() {

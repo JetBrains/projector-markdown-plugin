@@ -47,6 +47,7 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
   public static final Ref<VirtualFile> PLANTUML_JAR_TEST = Ref.create();
   static final String PLANT_UML_DIRECTORY = "plantUML";
   static final String PLANTUML_JAR_URL = Registry.stringValue("markdown.plantuml.download.link");
+  //static final String PLANTUML_JAR_URL = "https://downloads.sourceforge.net/project/plantuml/plantuml.jar";
   static final String PLANTUML_JAR = "plantuml.jar";
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   @NotNull
