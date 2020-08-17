@@ -109,7 +109,6 @@ Includes the following features:</p>
     <psi.referenceContributor implementation="org.jetbrains.projector.plugins.markdown.lang.references.MarkdownReferenceProvider"/>
     <stripTrailingSpacesFilterFactory
       implementation="org.jetbrains.projector.plugins.markdown.editor.MarkdownStripTrailingSpacesFilterFactory"/>
-    <httpRequestHandler implementation="org.jetbrains.projector.plugins.markdown.ui.preview.PreviewStaticServer"/>
 
     <localInspection shortName="MarkdownUnresolvedFileReference" bundle="messages.MarkdownBundle"
                      key="markdown.unresolved.file.inspection.name" groupKey="markdown.inspection.group.ruby.name"
