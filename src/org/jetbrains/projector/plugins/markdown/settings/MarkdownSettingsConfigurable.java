@@ -54,8 +54,8 @@ public class MarkdownSettingsConfigurable implements SearchableConfigurable {
   @Nullable
   private MarkdownSettingsForm myForm = null;
 
-  public MarkdownSettingsConfigurable(@NotNull MarkdownApplicationSettings markdownApplicationSettings) {
-    myMarkdownApplicationSettings = markdownApplicationSettings;
+  public MarkdownSettingsConfigurable() {
+    myMarkdownApplicationSettings = MarkdownApplicationSettings.getInstance();
   }
 
   @NotNull
