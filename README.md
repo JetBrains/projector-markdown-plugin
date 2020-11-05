@@ -6,6 +6,9 @@ An IntelliJ plugin which provides a delegating Markdown preview.
 
 For more info, please check out [Projector.md](https://github.com/JetBrains/projector-server/blob/master/docs/Projector.md).
 
+## This project is obsolete
+Since [PRJ-131](https://youtrack.jetbrains.com/issue/PRJ-131), MD Preview is bundled into projector-server, so we don't need a separate MD plugin anymore. It makes of projector installation even easier.
+
 ## Building
 ```shell script
 ./gradlew :buildPlugin
